@@ -291,10 +291,167 @@ REPLACE INTO CUSTOMER1 SET ID=1300,CNAME='MAC',CITY='LDH';
 -- IN REPLACE IF WE HAVE DONOT HAVE DATA THEN IT CREATES THE DATA(BY INSERTION) BUT IN UPDATE IT WILL DO NOTHING
 
 
+
+
+-- JOINS
+
+
 -- JOINS:- TO APPLY JOINS, THERE SHOULD BE A COMMON ATTRIBUTE BETWEEN TWO TABLES(FOREIGN KEY)
 
+CREATE TABLE Departments (
+    DepartmentID INT PRIMARY KEY,
+    DepartmentName VARCHAR(50)
+);
+INSERT INTO Departments (DepartmentID, DepartmentName) VALUES
+(101, 'HR'),
+(102, 'IT'),
+(104, 'Finance'),
+(105, 'FinCORP'),
+(106, 'ACCOUNTS'),
+(108, 'Devloper');
 
--- SET OPERATIONS:-   
+
+
+
+
+
+
+
+CREATE TABLE Employees (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(50),
+    DepartmentID INT,
+    FOREIGN KEY (DepartmentID) REFERENCES Departments(DepartmentID) ON DELETE CASCADE
+);
+
+
+INSERT INTO Employees (EmployeeID, Name, DepartmentID) VALUES
+(1, 'John', 101),
+(2, 'Alice', 102),
+(3, 'Bob', 104),
+(4, 'Eve', 102);
+
+SELECT * FROM Departments ;
+SELECT * FROM Employees;
+
+
+
+
+-- INNER JOIN
+
+SELECT C.*, O.* FROM Departments AS C INNER JOIN Employees AS O ON C.DepartmentID=O.DepartmentID;
+
+-- OUTER JOIN:-
+   -- LEFT JOIN
+
+      SELECT C.*, O.* FROM Departments AS C LEFT JOIN Employees AS O ON C.DepartmentID=O.DepartmentID;
+
+   -- RIGHT JOIN:-
+
+      SELECT C.*, O.* FROM Departments AS C RIGHT JOIN Employees AS O ON C.DepartmentID=O.DepartmentID;
+
+   -- FULL JOIN:- 
+
+       SELECT C.*, O.* FROM Departments AS C FULL JOIN Employees AS O ON C.DepartmentID=O.DepartmentID; -- In postgresql we have FULL JOIN as a keyword that we can use to write sql query but in mysql we have to do union of LEFT JOIN AND RIGHT JOIN. 
+	   
+
+-- CROSS JOIN:- It is basically cartesian product of both the tables.
+-- If left table has m rows and right table has n rows then resultant table will have m*n rows.
+
+       SELECT C.* , O.* FROM Departments AS C CROSS JOIN Employees AS O;
+
+
+
+-- SELF JOIN:-(v.imp look at the ss(Notes))
+-- self join can be done with the help of the inner join or left join
+
+
+-- Employee manager relationship
+SELECT e1.EmployeeID AS Employee, e1.Name AS EmployeeName, 
+       e2.EmployeeID AS ManagerID, e2.Name AS ManagerName
+FROM Employees e1
+LEFT JOIN Employees e2 ON e1.ManagerID = e2.EmployeeID;    -- important to understand after ON
+
+--or 
+
+SELECT e1.EmployeeID, e1.Name AS Employee, e2.Name AS Manager
+FROM Employees e1
+INNER JOIN Employees e2 ON e1.ManagerID = e2.EmployeeID;
+
+
+-- SET OPERATIONS:-
+
+-- 📌 Is it Important to Have the Same Columns in Set Operations (UNION, INTERSECT, MINUS)?
+-- Yes! In SQL, when performing set operations like UNION, INTERSECT, and MINUS (also called EXCEPT in PostgreSQL and MySQL), both tables must have:
+
+-- 1️⃣ The same number of columns
+-- 2️⃣ The same data types in corresponding columns
+-- 3️⃣ Compatible column order
+
+-- No duplicates are allowed in sets
+
+-- There r 3 types of SET operations:-
+
+-- UNION
+-- INTERSECTION
+-- MINUS
+
+
+
+CREATE TABLE Employees_2023 (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(50)
+);
+
+INSERT INTO Employees_2023 (EmployeeID, Name) VALUES
+(1, 'Alice'),
+(2, 'Bob'),
+(3, 'Charlie'),
+(4, 'David');
+
+
+CREATE TABLE Employees_2024 (
+    EmployeeID INT PRIMARY KEY,
+    Name VARCHAR(50)
+);
+
+INSERT INTO Employees_2024 (EmployeeID, Name) VALUES
+(3, 'Charlie'),
+(4, 'David'),
+(5, 'Eve'),
+(6, 'Frank');
+
+SELECT * FROM Employees_2023;
+SELECT * FROM Employees_2024;
+
+
+-- UNION:-
+
+-- UNION SEEMS QUITE SIMILAR TO THE FULL JOIN(VENN DIAGRAM)
+
+SELECT * FROM Employees_2023
+UNION 
+SELECT * FROM Employees_2024;
+
+-- INTERSECT:-
+
+-- INTERSECT SEEMS QUITE SIMILAR TO THE INNER JOIN(VENN DIAGRAM)
+
+
+SELECT * FROM Employees_2023
+INTERSECT
+SELECT * FROM Employees_2024;
+-- IN POSTGRES SQL WE HAVE INTERSECT AS A KEYWORD BUT IN MYSQL WE DO IT USING INNER JOIN(NOTES).
+
+
+-- MINUS:-
+
+-- THERE IS NO MINUS IN POSTGRES SQL SO WE HAVE TO DO IT USING LEFT JOIN.
+
+SELECT * FROM Employees_2023 AS A EXCEPT SELECT * FROM Employees_2024;  -- EXCEPT IS USED IN POSTGRES TO MINUS
+
+
+-- SUB- QUERIES:-
 
 
 
